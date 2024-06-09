@@ -7,6 +7,7 @@
 #include <stdbool.h> // bool
 #include <pthread.h> // pthread_create, pthread_join, pthread_mutex_t
 #include <sys/time.h> // gettimeofday, struct timeval
+#include <string.h> // memset
 
 typedef struct s_table t_table;
 
