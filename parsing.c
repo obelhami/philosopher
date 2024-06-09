@@ -19,7 +19,7 @@ int    check_arg(char *arg)
 void    fill_struct(t_table *table, int i, char *arg)
 {
     if (i == 1)
-        table->number_of_philosophers = ft_atol(arg);
+        table->nbr_philosophers = ft_atol(arg);
     if (i == 2)
         table->time_to_die = ft_atol(arg);
     if (i == 3)
@@ -27,9 +27,8 @@ void    fill_struct(t_table *table, int i, char *arg)
     if (i == 4)
         table->time_to_sleep = ft_atol(arg);
     if (i == 5)
-        table->number_of_times_each_philosopher_must_eat = ft_atol(arg);
+        table->nbr_limit_meals = ft_atol(arg);
 }
-
 
 void    parsing(int argc, char **argv, t_table *table)
 {

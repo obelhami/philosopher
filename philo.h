@@ -1,27 +1,50 @@
 #ifndef PHILO_H
 #define PHILO_H
 
-#include <pthread.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> // printf
+#include <stdlib.h> // malloc, free, exit
+#include <unistd.h> // usleep
+#include <stdbool.h> // bool
+#include <pthread.h> // pthread_create, pthread_join, pthread_mutex_t
+#include <sys/time.h> // gettimeofday, struct timeval
 
-typedef struct s_table
+typedef struct s_table t_table;
+
+typedef struct s_fork
 {
-    int number_of_philosophers;
     int id;
-    int time_to_die;
-    int time_to_eat;
-    int time_to_sleep;
-    int number_of_times_each_philosopher_must_eat;
-    pthread_mutex_t *forks;
-    pthread_mutex_t test;
-} t_table;
+    pthread_mutex_t mutex;
+} t_fork;
+
+typedef struct s_philo
+{
+    int id;
+    long meals_counter;
+    bool full;
+    long last_meal_time;
+    t_fork *left_fork;
+    t_fork *right_fork;
+    pthread_t thread_id;
+    t_table *table;
+} t_philo;
 
 
-void *philosopher(void *arg);
-long ft_atol(char *str);
+struct s_table
+{
+    long    nbr_philosophers;
+    long    time_to_eat;
+    long    time_to_sleep;
+    long    time_to_die;
+    long    nbr_limit_meals;
+    long    start_simmulation;
+    bool    end_simmulation;
+    t_fork  *forks; //array of forks 
+    t_philo *philos; // array of philos
+};
+
+void error(char *msg);
 void parsing(int argc, char **argv, t_table *table);
-int check_arg(char *arg);
+long ft_atol(char *str);
+void    fill_struct(t_table *table, int i, char *arg);
 
 #endif
