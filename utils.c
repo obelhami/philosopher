@@ -1,36 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atol.c                                          :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: obelhami <obelhami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/06/09 23:02:06 by obelhami          #+#    #+#             */
-/*   Updated: 2024/06/09 23:02:07 by obelhami         ###   ########.fr       */
+/*   Created: 2024/06/10 03:08:58 by obelhami          #+#    #+#             */
+/*   Updated: 2024/06/10 05:26:00 by obelhami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-long ft_atol(char *str)
+long get_time()
 {
-    long res;
-    int sign;
+    struct timeval tv;
+    
+    gettimeofday(&tv, NULL);
+    return ((tv.tv_sec * 1000 ) + (tv.tv_usec / 1000));
+}
 
-    res = 0;
-    sign = 1;
-    while (*str == ' ')
-        str++;
-    if (*str == '-' || *str == '+')
-    {
-        if (*str == '-')
-            sign = -1;
-        str++;
-    }
-    while (*str >= '0' && *str <= '9')
-    {
-        res = res * 10 + *str - '0';
-        str++;
-    }
-    return (res * sign);
+void  ft_sleep(long time)
+{
+    long current_time;
+
+    current_time = get_time();
+    while (get_time() - current_time < time);
 }

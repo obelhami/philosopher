@@ -9,23 +9,21 @@
 #include <sys/time.h> // gettimeofday, struct timeval
 #include <string.h> // memset
 
-typedef struct s_table t_table;
+#define M_LOCK pthread_mutex_lock
+#define M_UNLOCK pthread_mutex_unlock
+#define M_INIT pthread_mutex_init
 
-typedef struct s_fork
-{
-    int id;
-    pthread_mutex_t mutex;
-} t_fork;
+typedef struct s_table t_table;
 
 typedef struct s_philo
 {
+    pthread_t th;
     int id;
     long meals_counter;
     bool full;
     long last_meal_time;
-    t_fork *left_fork;
-    t_fork *right_fork;
-    pthread_t thread_id;
+    pthread_mutex_t *left_fork;
+    pthread_mutex_t *right_fork;
     t_table *table;
 } t_philo;
 
@@ -39,13 +37,20 @@ struct s_table
     long    nbr_limit_meals;
     long    start_simmulation;
     bool    end_simmulation;
-    t_fork  *forks; //array of forks 
+    pthread_mutex_t mutex;
+    pthread_mutex_t  *forks; //array of forks 
     t_philo *philos; // array of philos
 };
 
-void error(char *msg);
-void parsing(int argc, char **argv, t_table *table);
+
+int parsing(int argc, char **argv, t_table *table);
 long ft_atol(char *str);
-void    fill_struct(t_table *table, int i, char *arg);
+void    fill_struct(t_table *table, long i, char *arg);
+
+void *routine(void *philo);
+
+
+long get_time();
+void  ft_sleep(long time);
 
 #endif

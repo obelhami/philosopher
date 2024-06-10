@@ -16,8 +16,9 @@ int    check_arg(char *arg)
     return (1);
 }
 
-void    fill_struct(t_table *table, int i, char *arg)
+void    fill_struct(t_table *table, long i, char *arg)
 {
+    table->nbr_limit_meals = -1;
     if (i == 1)
         table->nbr_philosophers = ft_atol(arg);
     if (i == 2)
@@ -29,46 +30,49 @@ void    fill_struct(t_table *table, int i, char *arg)
     if (i == 5)
         table->nbr_limit_meals = ft_atol(arg);
 }
-void    chack_int_max(char **argv)
+int    chack_int_max(int argc, char **argv)
 {
     int i;
 
     i = 1;
-    while (i < 6)
+    while (i < argc - 1)
     {
         if (ft_atol(argv[i]) > 2147483647)
         {
             printf("Error: argument is too big\n");
-            exit(1);
+            return (1);
         }
         i++;
     }
     i = 1;
-    while (i < 6)
+    while (i < argc - 1)
     {
         if (ft_atol(argv[i]) < 0)
         {
             printf("Error: argument is negative\n");
-            exit(1);
+            return (1);
         }
         i++;
     }
+    return (0);
 }
 
-void    parsing(int argc, char **argv, t_table *table)
+int    parsing(int argc, char **argv, t_table *table)
 {
-    int i;
+    long i;
 
     i = 1;
-    chack_int_max(argv);
+    if (chack_int_max(argc, argv))
+        return (1);
     while (i < argc)
     {
         if (check_arg(argv[i]) == 0)
         {
             printf("Error: wrong argument\n");
-            exit(1);
+            return (1);
         }
         fill_struct(table, i, argv[i]);
         i++;
     }
+    return (0);
 }

@@ -2,10 +2,12 @@ SRCS			= $(wildcard *.c)
 OBJS			= $(SRCS:.c=.o)
 CC				= cc
 RM				= rm -f
-CFLAGS			= -Wall -Wextra -Werror #-g3  -fsanitize=address -fsanitize=thread
+CFLAGS			= -Wall -Wextra -Werror -g3  -fsanitize=thread
 
 NAME = philo
 
+#-Ipathfinkyanin_headers
+#-Lpath_finkayna_lib -lsmiyadyallib
 all : $(NAME)
 
 $(NAME): $(OBJS)
