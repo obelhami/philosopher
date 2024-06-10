@@ -6,7 +6,7 @@
 /*   By: obelhami <obelhami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 23:32:11 by obelhami          #+#    #+#             */
-/*   Updated: 2024/06/10 05:44:41 by obelhami         ###   ########.fr       */
+/*   Updated: 2024/06/10 06:56:37 by obelhami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,29 @@ int think(t_philo *philo)
 
 int eat(t_philo *philo)
 {
+    if (philo->table->nbr_limit_meals != -1 &&  philo->meals_counter >= philo->table->nbr_limit_meals)
+        return (1);
+    M_LOCK(philo->right_fork);
+    if (message(philo, "has taken right fork"))
+    {
+        M_UNLOCK(philo->right_fork);
+        return (1);
+    }
+    M_LOCK(philo->left_fork);
+    if (message(philo, "has taken left fork"))
+    {
+        M_UNLOCK(philo->left_fork);
+        return (1);
+    }
     if (message(philo, "is eating"))
         return (1);
+    philo->meals_counter++;
     ft_sleep(philo->table->time_to_eat);
+    M_LOCK(&philo->table->mutex);
+    philo->last_meal_time = get_time();
+    M_UNLOCK(&philo->table->mutex);
+    M_UNLOCK(philo->right_fork);
+    M_UNLOCK(philo->left_fork);
     return (0);
 }
 

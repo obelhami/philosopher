@@ -6,7 +6,7 @@
 /*   By: obelhami <obelhami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 00:00:01 by obelhami          #+#    #+#             */
-/*   Updated: 2024/06/10 05:51:19 by obelhami         ###   ########.fr       */
+/*   Updated: 2024/06/10 07:23:17 by obelhami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,22 @@ int assign_forks(t_table *table)
     i = 0;
     while (i < table->nbr_philosophers)
     {
-        if (i  == 0)
+        //n_philos = 4
+        // f = r
+        // s = l
+        // i = 0  ==> philo->id = 1 ==> id % 2 != 0 ==> f == &fork[id + 1 % n_ph] || s == &fork[ i ]
+        // i = 1  ==> philo->id = 2 ==> id % 2 == 0 ==> f == &fork[ i ] || s == &fork[id + 1 % n_ph] 
+        // i = 2  ==> philo->id = 3 ==> id % 2 != 0 ==> f == &fork[id + 1 % n_ph] || s == &fork[ i ]
+        // i = 3  ==> philo->id = 4 ==> id % 2 == 0 ==> f == &fork[ i ] || s == &fork[id + 1 % n_ph]
+        if (table->philos[i].id % 2 == 0)
         {
-            table->philos[i].right_fork = &table->forks[nbr_philos - 1];
-            table->philos[i].left_fork = &table->forks[i];
+            table->philos[i].right_fork = &table->forks[i];
+            table->philos[i].left_fork = &table->forks[(table->philos[i].id + 1) % nbr_philos];
         }
         else
         {
-            table->philos[i].right_fork = &table->forks[i - 1];
-            table->philos[i].left_fork = &table->forks[i]; 
+            table->philos[i].left_fork = &table->forks[i];
+            table->philos[i].right_fork = &table->forks[(table->philos[i].id + 1) % nbr_philos];
         }
         i++;
     }
