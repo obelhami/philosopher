@@ -6,7 +6,7 @@
 /*   By: obelhami <obelhami@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 00:00:01 by obelhami          #+#    #+#             */
-/*   Updated: 2024/06/10 07:23:17 by obelhami         ###   ########.fr       */
+/*   Updated: 2024/06/11 05:30:18 by obelhami         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,22 +44,15 @@ int assign_forks(t_table *table)
     i = 0;
     while (i < table->nbr_philosophers)
     {
-        //n_philos = 4
-        // f = r
-        // s = l
-        // i = 0  ==> philo->id = 1 ==> id % 2 != 0 ==> f == &fork[id + 1 % n_ph] || s == &fork[ i ]
-        // i = 1  ==> philo->id = 2 ==> id % 2 == 0 ==> f == &fork[ i ] || s == &fork[id + 1 % n_ph] 
-        // i = 2  ==> philo->id = 3 ==> id % 2 != 0 ==> f == &fork[id + 1 % n_ph] || s == &fork[ i ]
-        // i = 3  ==> philo->id = 4 ==> id % 2 == 0 ==> f == &fork[ i ] || s == &fork[id + 1 % n_ph]
         if (table->philos[i].id % 2 == 0)
         {
             table->philos[i].right_fork = &table->forks[i];
-            table->philos[i].left_fork = &table->forks[(table->philos[i].id + 1) % nbr_philos];
+            table->philos[i].left_fork = &table->forks[(i + 1) % nbr_philos];
         }
         else
         {
             table->philos[i].left_fork = &table->forks[i];
-            table->philos[i].right_fork = &table->forks[(table->philos[i].id + 1) % nbr_philos];
+            table->philos[i].right_fork = &table->forks[(i + 1) % nbr_philos];
         }
         i++;
     }
@@ -69,9 +62,15 @@ int assign_forks(t_table *table)
 int    data_init(t_table *table)
 {
     long i;
+    pthread_t   monitor_th;
 
-    //TODO create monitor thread
     if (M_INIT(&table->mutex, NULL))
+        return (1);
+    if (M_INIT(&table->c_mutex, NULL))
+        return (1);
+    if (M_INIT(&table->meal_mutex, NULL))
+        return (1);    
+    if (M_INIT(&table->monitor_mutex, NULL))
         return (1);
     i = 0;
     table->philos = malloc(sizeof(t_philo) * table->nbr_philosophers);
@@ -82,20 +81,36 @@ int    data_init(t_table *table)
         return(1);
     init_philos(table);
     assign_forks(table);
+    /*monitor thread*/
     table->start_simmulation = get_time();
+    if (pthread_create(&monitor_th, NULL, &monitor, table))
+        return (1);
     while (i < table->nbr_philosophers)
     {
         if (pthread_create(&table->philos[i].th, NULL, &routine, &table->philos[i]))
             return (1);
         i++;
     }
+    if (i == table->nbr_philosophers)
+    {
+        M_LOCK(&table->monitor_mutex);
+        table->flag = 1;
+        M_UNLOCK(&table->monitor_mutex);
+
+    }
     i = 0;
+    if (pthread_join(monitor_th, NULL))
+        return (1);
+
     while (i < table->nbr_philosophers)
     {
         if (pthread_join(table->philos[i].th, NULL))
             return (1);
         i++;
     }
+    //TODO Destroy threads
+    //TODO// free(table->philos);
+    // free(table->forks);
     return (0);
 }
 
@@ -113,7 +128,6 @@ int main(int argc, char **argv)
         memset(&table, 0, sizeof(t_table));
         if (parsing(argc, argv, &table))
             return (1);
-        // ft_print_table(table);
         if (data_init(&table))
             return (1);
     }

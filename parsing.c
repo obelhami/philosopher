@@ -28,7 +28,7 @@ void    fill_struct(t_table *table, long i, char *arg)
     if (i == 4)
         table->time_to_sleep = ft_atol(arg);
     if (i == 5)
-        table->nbr_limit_meals = ft_atol(arg);
+        table->nbr_limit_meals = ft_atol(arg); 
 }
 int    chack_int_max(int argc, char **argv)
 {

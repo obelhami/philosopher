@@ -37,7 +37,12 @@ struct s_table
     long    nbr_limit_meals;
     long    start_simmulation;
     bool    end_simmulation;
+    int     flag;
     pthread_mutex_t mutex;
+    pthread_mutex_t meal_mutex;
+    pthread_mutex_t monitor_mutex;
+    pthread_mutex_t c_mutex;
+
     pthread_mutex_t  *forks; //array of forks 
     t_philo *philos; // array of philos
 };
@@ -52,5 +57,8 @@ void *routine(void *philo);
 
 long get_time();
 void  ft_sleep(long time);
+void *monitor(void *arg);
+int message(t_philo *philo, char *msg);
+
 
 #endif

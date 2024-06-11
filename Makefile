@@ -6,7 +6,7 @@ CFLAGS			= -Wall -Wextra -Werror -g3  -fsanitize=thread
 
 NAME = philo
 
-#-Ipathfinkyanin_headers
+#-Ipathfinkyanin_headerst
 #-Lpath_finkayna_lib -lsmiyadyallib
 all : $(NAME)
 
